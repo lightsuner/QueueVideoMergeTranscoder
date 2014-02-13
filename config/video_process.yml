@@ -1,6 +1,9 @@
-src_path:
-dest_path:
+src_path: '/Users/alkuk/Downloads/'
+dest_path: '/Users/alkuk/Movies/1/'
 video_w: 440
 video_h: 468
 video_space: 30
+pad_color: '0xe4e4e4'
+output_format: '-acodec libfaac -ab 192k -ar 41000 -f flv -b:v 4000k -c:v libx264 -filter:a apad -loglevel error'
+output_ext: flv
 
