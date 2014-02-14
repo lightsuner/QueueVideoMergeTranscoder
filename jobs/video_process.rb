@@ -8,8 +8,8 @@ class VideoProcess < BaseJob
 
   def initialize(session_name)
     @session_name = session_name
-    @candidate_file = "#{@session_name}|candidate.flv"
-    @expert_file = "#{@session_name}|expert.flv"
+    @candidate_file = "#{@session_name}candidate.flv"
+    @expert_file = "#{@session_name}expert.flv"
 
     load_config
   end

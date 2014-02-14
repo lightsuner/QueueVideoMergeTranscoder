@@ -24,6 +24,8 @@ class FileMove < BaseJob
 
     FileUtils.mv @file_path, new_file_path
 
+    FileUtils.chmod 0755, new_file_path
+
     Resque.enqueue(UpdateVideoStatus, new_file_path)
 
   end

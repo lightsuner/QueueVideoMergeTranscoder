@@ -17,16 +17,18 @@ set -e
 
 NAME="dryrun"
 ROOT="/opt/VideoTranscoder"
-USER="root"
-GROUP="root"
+USER="ubuntu"
+GROUP="ubuntu"
 ENVIRONMENT="production"
 QUEUES="video_process,file_move"
 COUNT=1
+RUBYBIN=/home/ubuntu/.rvm/gems/ruby-2.1.0/bin
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:$RUBYBIN
 
-BUNDLER="/home/ubuntu/.rvm/gems/ruby-2.1.0/bin/bundle"
-RAKE="/home/ubuntu/.rvm/rubies/ruby-2.1.0/bin/rake"
-TASK="resque:work & >> /var/log/rasque/resque_worker_QUEUE.log 2>&1 VVERBOSE=true"
-PIDFILE="$ROOT/tmp/pids/resque_worker.%d.pid"
+BUNDLER="$RUBYBIN/bundle"
+RAKE="$RUBYBIN/rake"
+TASK="resque:work & >> /var/log/resque/resque_worker_QUEUE.log 2>&1 VVERBOSE=true"
+PIDFILE="/run/resque/resque_worker.%d.pid"
 
 start() {
 	local program
@@ -40,12 +42,15 @@ start() {
 		options="$TASK"
 	fi
 
+    log_daemon_msg $program
+
 	options="$options RACK_ENV=$ENVIRONMENT QUEUES=$QUEUES"
 
 	for i in $(seq 1 $COUNT); do
 		pidfile=$(printf "$PIDFILE" $i)
 
-		if start-stop-daemon --start --background --quiet --pidfile $pidfile --chdir $ROOT --chuid $USER:$GROUP --exec $program -- $options PIDFILE=$pidfile
+		#if start-stop-daemon --start --background --quiet --pidfile $pidfile --chdir $ROOT --chuid $USER:$GROUP --exec $program -- $options PIDFILE=$pidfile
+		if start-stop-daemon --start --pidfile $pidfile --chdir $ROOT --chuid $USER:$GROUP --exec $program -- $options PIDFILE=$pidfile
 		then
 			log_daemon_msg "Starting worker #$i for $NAME ..."
 		else
